@@ -1,34 +1,31 @@
 import express from "express";
 import fs from "fs";
-import path from "path";
 
 const app = express();
-const file = path.resolve("/tmp/visitors.json");
+const FILE = "visitors.json";
 
-// Wenn Datei fehlt, mit 0 starten
-function loadCount() {
+// Besucherzahl laden oder 0 setzen
+let count = 0;
+if (fs.existsSync(FILE)) {
   try {
-    return JSON.parse(fs.readFileSync(file)).count;
+    count = JSON.parse(fs.readFileSync(FILE)).count || 0;
   } catch {
-    return 0;
+    count = 0;
   }
 }
 
-function saveCount(count) {
-  fs.writeFileSync(file, JSON.stringify({ count }));
-}
-
-// Route für Zähler
+// Besucher +1
 app.get("/count", (req, res) => {
-  let count = loadCount() + 1;
-  saveCount(count);
+  count++;
+  fs.writeFileSync(FILE, JSON.stringify({ count }));
   res.json({ count });
 });
 
-// Route für Anzeige
+// Hauptseite
 app.get("/", (req, res) => {
-  res.send(`<h1>👀 Besucher: ${loadCount()}</h1>`);
+  res.send(`<h1>👀 Besucher: ${count}</h1>`);
 });
 
+// Starten
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log("✅ Besucherzähler läuft auf Port " + PORT));
