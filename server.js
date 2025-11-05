@@ -28,4 +28,6 @@ app.get("/", (req, res) => {
 
 // Starten
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log("✅ Besucherzähler läuft auf Port " + PORT));
+app.listen(PORT, () =>
+  console.log("✅ Besucherzähler läuft auf Port " + PORT)
+);
